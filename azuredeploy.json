@@ -1,0 +1,179 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+             "type": "string"
+        },
+        "hostingPlanName": {
+             "type": "string"
+        },
+        "sku": {
+        "type": "string",
+        "allowedValues": [
+            "F1",
+            "B1",
+            "S1"
+        ],
+        "defaultValue": "F1"
+        },
+        "repoUrl": {
+        "type": "string"
+        },
+        "branch": {
+        "type": "string",
+        "defaultValue": "master"
+    }
+  },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('hostingPlanName')]",
+            "location": "North Europe",
+            "kind": "app,linux",
+            "properties": {
+                    }
+                ],
+
+        "properties": {
+        "name": "[parameters('siteName')]",
+        "serverFarmId": "[parameters('hostingPlanName')]",
+        "siteConfig": {
+          "localMySqlEnabled": true,
+           "appSettings": [
+            { "name": "WEBSITE_MYSQL_ENABLED", "value": "1" },
+            { "name": "WEBSITE_MYSQL_GENERAL_LOG", "value": "0" },
+            { "name": "WEBSITE_MYSQL_SLOW_QUERY_LOG", "value": "0" },
+            { "name": "WEBSITE_MYSQL_ARGUMENTS", "value": "--max_allowed_packet=16M" }
+          ]
+        }
+      },
+
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_TestCPwordpress_name'), '/web')]",
+            "location": "North Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_TestCPwordpress_name'))]"
+            ],
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php",
+                    "hostingstart.html"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "linuxFxVersion": "PHP|7.4",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "httpLoggingEnabled": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$TestCPwordpress",
+                "azureStorageAccounts": {},
+                "scmType": "GitHubAction",
+                "use32BitWorkerProcess": true,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 1,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "ftpsState": "AllAllowed",
+                "reservedInstanceCount": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_TestCPwordpress_name'), '/53ae084b72e7406e8114d5fd5c079548')]",
+            "location": "North Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_TestCPwordpress_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"ada607f63a871a8428aaef184e685a319d5a11ee\",\"repoName\":\"cprodromou/wordpress-azure2\",\"slotName\":\"production\",\"commitMessage\":\"Add or update the App Service deployment workflow configuration from Azure Portal.\"}",
+                "start_time": "2021-06-22T08:13:37.3216816Z",
+                "end_time": "2021-06-22T08:14:07.702869Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_TestCPwordpress_name'), '/59144c2c8be34c7193e9a3486e18b8bf')]",
+            "location": "North Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_TestCPwordpress_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "author_email": "N/A",
+                "author": "N/A",
+                "deployer": "GITHUB_ZIP_DEPLOY",
+                "message": "{\"type\":\"deployment\",\"sha\":\"ada607f63a871a8428aaef184e685a319d5a11ee\",\"repoName\":\"cprodromou/wordpress-azure2\",\"slotName\":\"production\",\"commitMessage\":\"\"}",
+                "start_time": "2021-06-22T08:16:58.0482303Z",
+                "end_time": "2021-06-22T08:17:21.0568792Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2018-11-01",
+            "name": "[concat(parameters('sites_TestCPwordpress_name'), '/', parameters('sites_TestCPwordpress_name'), '.azurewebsites.net')]",
+            "location": "North Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_TestCPwordpress_name'))]"
+            ],
+            "properties": {
+                "siteName": "TestCPwordpress",
+                "hostNameType": "Verified"
+            }
+        }
+    ]
+}
